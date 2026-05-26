@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vienkāršais Clicker ar Uzvaru</title>
+    <style>
+        /* DIZAINA KRĀSU MAIŅA ATBILSTOŠI NORĀDĪJUMIEM */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #F0F7F4; /* Gaišais fons */
+            color: #1D2D44; /* Tumšais teksts */
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Kreisā puse (Kur klikšķina) */
+        .puse-kreisa {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #ffffff 0%, #F0F7F4 70%);
+        }
+
+        /* Labā puse (Veikals) */
+        .puse-labas {
+            width: 380px;
+            background-color: #1D2D44; /* Tumši zilais fons veikalam */
+            padding: 20px;
+            border-left: 3px solid #3E5C76;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #F0F7F4; /* Veikala teksts gaišs */
+        }
+
+        #rezultats {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #1D2D44;
+            text-shadow: 0 0 10px rgba(62, 92, 118, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .cps-teksts {
+            font-size: 1.2rem;
+            color: #3E5C76;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        /* Klikšķināmais attēls */
+        #galvenaisAttels {
+            cursor: pointer;
+            border-radius: 20px;
+            border: 5px solid #3E5C76;
+            box-shadow: 0 10px 25px rgba(29, 45, 68, 0.2);
+            transition: transform 0.05s, box-shadow 0.2s;
+        }
+
+        #galvenaisAttels:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(62, 92, 118, 0.4);
+        }
+
+        #galvenaisAttels:active {
+            transform: scale(0.95);
+        }
+
+        /* Veikala pogas */
+        .veikala-poga {
+            background-color: #3E5C76; /* Pāva zilais pogu fons */
+            border: 2px solid #1D2D44;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            color: #F0F7F4;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .veikala-poga:hover {
+            background-color: #1D2D44;
+            border-color: #F0F7F4;
+        }
+
+        .cena {
+            color: #F0F7F4;
+            background-color: #1D2D44;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .daudzums {
+            font-size: 1.5rem;
+            color: #F0F7F4;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        /* Rebirth paneļa stils apakšā */
+        .rebirth-panelis {
+            background-color: #1D2D44;
+            padding: 15px;
+            border: 2px solid #3E5C76;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .rebirth-poga {
+            background: linear-gradient(135deg, #3E5C76, #F0F7F4);
+            border: none;
+            color: #1D2D44;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: transform 0.2s;
+        }
+
+        .rebirth-poga:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .rebirth-poga:disabled {
+            background: #3E5C76;
+            color: #1D2D44;
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="puse-kreisa">
+        <h2 id="formas-nosaukums" style="color: #3E5C76; margin-bottom: 0;">Evolūcija: Bronzas mēme (Lvl 1)</h2>
+        <div id="rezultats">0</div>
+        <div class="cps-teksts">Punkti sekundē: <span id="cps-skaitlis">0</span></div>
+        
+        <img id="galvenaisAttels" src="https://brainrothub.com/brainrot-main/characters/Tralalero-Tralala.webp" width="230" height="230" onclick="klikskis()">
+    </div>
+
+    <div class="puse-labas">
+        <div>
+            <h3 style="border-bottom: 2px solid #3E5C76; padding-bottom: 10px; margin-top: 0; color: #F0F7F4; letter-spacing: 1px;">ĒKAS</h3>
+
+            <div class="veikala-poga" onclick="pirktKursoru()">
+                <div>
+                    <strong>Kursors</strong><br>
+                    <span style="font-size: 0.85rem; opacity: 0.8;">Dod +0.2 p/s</span>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cena">Cena: <span id="kursa-cena">15</span></div>
+                    <div class="daudzums" id="kursa-daudzums">0</div>
+                </div>
+            </div>
+
+            <div class="veikala-poga" onclick="pirktGeneratoru()">
+                <div>
+                    <strong>Mēmju Ģenerators</strong><br>
+                    <span style="font-size: 0.85rem; opacity: 0.8;">Dod +1.5 p/s</span>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cena">Cena: <span id="generatora-cena">100</span></div>
+                    <div class="daudzums" id="generatora-daudzums">0</div>
+                </div>
+            </div>
+
+            <div class="veikala-poga" onclick="pirktFabriku()">
+                <div>
+                    <strong>Mēmju Fabrika</strong><br>
+                    <span style="font-size: 0.85rem; opacity: 0.8;">Dod +15.0 p/s</span>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cena">Cena: <span id="fabrikas-cena">1100</span></div>
+                    <div class="daudzums" id="fabrikas-daudzums">0</div>
+                </div>
+            </div>
+
+            <h3 style="border-bottom: 2px solid #3E5C76; padding-bottom: 10px; margin-top: 20px; color: #F0F7F4; letter-spacing: 1px;">UZLABOJUMI</h3>
+
+            <div class="veikala-poga" onclick="pirktDzerienu()" id="uzlabojums0-poga">
+                <div>
+                    <strong>Enerģijas dzēriens</strong><br>
+                    <span style="font-size: 0.85rem; opacity: 0.8;">Klikšķi dod +2 jaudu</span>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cena">Cena: <span id="uzlabojums0-cena">50</span></div>
+                </div>
+            </div>
+
+            <div class="veikala-poga" onclick="pirktPirkstus()" id="uzlabojums1-poga">
+                <div>
+                    <strong>Plastmasas pirksti</strong><br>
+                    <span style="font-size: 0.85rem; opacity: 0.8;">Klikšķi dod +1 jaudu</span>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cena">Cena: <span id="uzlabojums1-cena">120</span></div>
+                </div>
+            </div>
+
+            <div class="veikala-poga" onclick="pirktZeltaPeli()" id="uzlabojums2-poga">
+                <div>
+                    <strong>Zelta pele</strong><br>
+                    <span style="font-size: 0.85rem; opacity: 0.8;">Klikšķi dod +5 jaudu!</span>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cena">Cena: <span id="uzlabojums2-cena">600</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rebirth-panelis">
+            <div style="font-size: 0.95rem; font-weight: bold;">
+                Rebirth reizes: <span id="rebirth-skaits" style="color:#F0F7F4;">0</span> / 5
+            </div>
+            <button class="rebirth-poga" id="rebirth-poga" onclick="veiktRebirth()" disabled>Pārdzimt (Rebirth)</button>
+            <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;" id="rebirth-prasiba">
+                Nepieciešami 5,000 punkti
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. MAINĪGIE
+        let punkti = 0;
+        let klikskaJauda = 1;
+
+        // Ēku skaitītāji
+        let kursoruSkaits = 0;
+        let generatoruSkaits = 0; // Pārdēvēts mainīgais
+        let fabrikuSkaits = 0;
+
+        // Cenas
+        let kursoraCena = 15;
+        let generatoraCena = 100; // Pārdēvēts mainīgais
+        let fabrikasCena = 1100;
+
+        let uzlabojums0Cena = 50;  
+        let uzlabojums1Cena = 120;
+        let uzlabojums2Cena = 600;
+
+        // Vai uzlabojumi nopirkti?
+        let uzlabojums0Nopirkts = false;
+        let uzlabojums1Nopirkts = false;
+        let uzlabojums2Nopirkts = false;
+
+        // Rebirth dati
+        let rebirthuSkaits = 0;
+        let rebirthCena = 5000; 
+        let spēlePabeigta = false;
+
+
+        // 2. KLIKŠĶIS
+        function klikskis() {
+            if (spēlePabeigta == true) return;
+
+            punkti = punkti + klikskaJauda;
+            atjaunotEkranu();
+        }
+
+
+        // 3. ĒKU PIRKŠANA
+        function pirktKursoru() {
+            if (spēlePabeigta == true) return;
+            if (punkti >= kursoraCena) {
+                punkti = punkti - kursoraCena;
+                kursoruSkaits = kursoruSkaits + 1;
+                kursoraCena = Math.round(kursoraCena * 1.15);
+                atjaunotEkranu();
+            }
+        }
+
+        function pirktGeneratoru() {
+            if (spēlePabeigta == true) return;
+            if (punkti >= generatoraCena) {
+                punkti = punkti - generatoraCena;
+                generatoruSkaits = generatoruSkaits + 1;
+                generatoraCena = Math.round(generatoraCena * 1.15);
+                atjaunotEkranu();
+            }
+        }
+
+        function pirktFabriku() {
+            if (spēlePabeigta == true) return;
+            if (punkti >= fabrikasCena) {
+                punkti = punkti - fabrikasCena;
+                fabrikuSkaits = fabrikuSkaits + 1;
+                fabrikasCena = Math.round(fabrikasCena * 1.15);
+                atjaunotEkranu();
+            }
+        }
+
+
+        // 4. UZLABOJUMU PIRKŠANA
+        function pirktDzerienu() {
+            if (punkti >= uzlabojums0Cena && uzlabojums0Nopirkts == false) {
+                punkti = punkti - uzlabojums0Cena;
+                klikskaJauda = klikskaJauda + 2; 
+                uzlabojums0Nopirkts = true;
+                document.getElementById("uzlabojums0-poga").style.display = "none";
+                atjaunotEkranu();
+            }
+        }
+
+        function pirktPirkstus() {
+            if (punkti >= uzlabojums1Cena && uzlabojums1Nopirkts == false) {
+                punkti = punkti - uzlabojums1Cena;
+                klikskaJauda = klikskaJauda + 1;
+                uzlabojums1Nopirkts = true;
+                document.getElementById("uzlabojums1-poga").style.display = "none";
+                atjaunotEkranu();
+            }
+        }
+
+        function pirktZeltaPeli() {
+            if (punkti >= uzlabojums2Cena && uzlabojums2Nopirkts == false) {
+                punkti = punkti - uzlabojums2Cena;
+                klikskaJauda = klikskaJauda + 5;
+                uzlabojums2Nopirkts = true;
+                document.getElementById("uzlabojums2-poga").style.display = "none";
+                atjaunotEkranu();
+            }
+        }
+
+
+        // 5. REBIRTH SISTĒMA
+        function veiktRebirth() {
+            if (punkti >= rebirthCena && rebirthuSkaits < 5) {
+                rebirthuSkaits = rebirthuSkaits + 1;
+
+                // 5. Rebirth - GALA UZVARA
+                if (rebirthuSkaits == 5) {
+                    spēlePabeigta = true;
+                    punkti = 999999;
+                    kursoruSkaits = 0;
+                    generatoruSkaits = 0;
+                    fabrikuSkaits = 0;
+                    
+                    document.getElementById("formas-nosaukums").innerText = "TU ESI UZVARĒJIS SPĒLI!";
+                    document.getElementById("formas-nosaukums").style.color = "#3E5C76";
+                    document.getElementById("galvenaisAttels").src = "https://pngdownload.io/wp-content/uploads/2025/04/Tung-Tung-Tung-Sahur-TikTok-Meme-Character-Transparent.webp"; 
+                    
+                    document.getElementById("rebirth-skaits").innerText = "5";
+                    document.getElementById("rebirth-poga").disabled = true;
+                    document.getElementById("rebirth-prasiba").innerText = "Spēle pabeigta! Apsveicam!";
+                    document.getElementById("cps-skaitlis").innerText = "0";
+                    document.getElementById("rezultats").innerText = "UZVARA";
+                    
+                    alert("Apsveicam! Tu veici 5 Rebirth reizes un pilnībā pabeidzi spēli!");
+                    return;
+                }
+
+                // Resets pēc pārdzimšanas
+                punkti = 0;
+                kursoruSkaits = 0;
+                generatoruSkaits = 0;
+                fabrikuSkaits = 0;
+                
+                kursoraCena = 15;
+                generatoraCena = 100;
+                fabrikasCena = 1100;
+
+                // Atgriežam redzamus uzlabojumus jaunajai dzīvei
+                uzlabojums0Nopirkts = false;
+                uzlabojums1Nopirkts = false;
+                uzlabojums2Nopirkts = false;
+                document.getElementById("uzlabojums0-poga").style.display = "flex";
+                document.getElementById("uzlabojums1-poga").style.display = "flex";
+                document.getElementById("uzlabojums2-poga").style.display = "flex";
+
+                // Pamata klikšķis kļūst stiprāks katrā jaunā dzīvē
+                klikskaJauda = 1 + (rebirthuSkaits * 2);
+
+                // Rebirth cena pieaug
+                rebirthCena = Math.round(rebirthCena * 2.5);
+
+                // Evolūcijas posmi
+                if (rebirthuSkaits == 1) {
+                    document.getElementById("formas-nosaukums").innerText = "Evolūcija: Sudraba mēme (Lvl 2)";
+                    document.getElementById("galvenaisAttels").src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc9NV48OtO5qAekq7_Wxwr09ffefbbWA-IYQ&s";
+                } else if (rebirthuSkaits == 2) {
+                    document.getElementById("formas-nosaukums").innerText = "Evolūcija: Zelta mēme (Lvl 3)";
+                    document.getElementById("galvenaisAttels").src = "https://i1.sndcdn.com/artworks-AtoLRjVHCEez03hb-gesM5Q-t1080x1080.png";
+                } else if (rebirthuSkaits == 3) {
+                    document.getElementById("formas-nosaukums").innerText = "Evolūcija: Neona mēme (Lvl 4)";
+                    document.getElementById("galvenaisAttels").src = "https://i.pinimg.com/736x/88/d2/50/88d250d1a908e8c49f706010468d5990.jpg";
+                } else if (rebirthuSkaits == 4) {
+                    document.getElementById("formas-nosaukums").innerText = "Evolūcija: Dimanta mēme (Lvl 5 - PĒDĒJAIS)";
+                    document.getElementById("pngdownload.io/wp-content/uploads/2025/04/Tung-Tung-Tung-Sahur-TikTok-Meme-Character-Transparent.webp").src = "https://pngdownload.io/wp-content/uploads/2025/04/Tung-Tung-Tung-Sahur-TikTok-Meme-Character-Transparent.webp";
+                }
+
+                alert("Tu pārdzimi! Tagad spēle ritēs vēl straujāk!");
+                atjaunotEkranu();
+            }
+        }
+
+
+        // 6. UI ATJAUNOŠANA
+        function atjaunotEkranu() {
+            if (spēlePabeigta == true) return;
+
+            document.getElementById("rezultats").innerText = Math.floor(punkti);
+            
+            document.getElementById("kursa-daudzums").innerText = kursoruSkaits;
+            document.getElementById("kursa-cena").innerText = kursoraCena;
+            document.getElementById("generatora-daudzums").innerText = generatoruSkaits;
+            document.getElementById("generatora-cena").innerText = generatoraCena;
+            document.getElementById("fabrikas-daudzums").innerText = fabrikuSkaits;
+            document.getElementById("fabrikas-cena").innerText = fabrikasCena;
+            
+            document.getElementById("rebirth-skaits").innerText = rebirthuSkaits;
+
+            // Aprēķinām punktus sekundē (Katrs rebirth dod +50% efektivitāti ēkām)
+            let RebirthMultiplikators = 1 + (rebirthuSkaits * 0.5);
+            let kursoruCps = (kursoruSkaits * 0.2) * RebirthMultiplikators;
+            let generatoruCps = (generatoruSkaits * 1.5) * RebirthMultiplikators;
+            let fabrikuCps = (fabrikuSkaits * 15.0) * RebirthMultiplikators;
+            
+            let kopejaisCps = kursoruCps + generatoruCps + fabrikuCps;
+            document.getElementById("cps-skaitlis").innerText = kopejaisCps.toFixed(1);
+
+            // Rebirth pogas pārbaude
+            if (punkti >= rebirthCena) {
+                document.getElementById("rebirth-poga").disabled = false;
+                document.getElementById("rebirth-prasiba").innerHTML = "<span style='color:#F0F7F4; font-weight:bold;'>Gatavs Pārdzimšanai!</span>";
+            } else {
+                document.getElementById("rebirth-poga").disabled = true;
+                document.getElementById("rebirth-prasiba").innerText = "Nepieciešami " + rebirthCena.toLocaleString() + " punkti";
+            }
+        }
+
+
+        // 7. TAIMERIS PASĪVAJAI RAŽOŠANAI (Darbojas 10 reizes sekundē)
+        setInterval(function() {
+            if (spēlePabeigta == true) return;
+
+            let RebirthMultiplikators = 1 + (rebirthuSkaits * 0.5);
+            let kursoruRazojums = (kursoruSkaits * 0.2) * RebirthMultiplikators;
+            let generatoruRazojums = (generatoruSkaits * 1.5) * RebirthMultiplikators;
+            let fabrikuRazojums = (fabrikuSkaits * 15.0) * RebirthMultiplikators;
+            
+            let kopejaisRazojums = (kursoruRazojums + generatoruRazojums + fabrikuRazojums) / 10;
+            
+            punkti = punkti + kopejaisRazojums;
+            atjaunotEkranu();
+        }, 100);
+
+    </script>
+</body>
+</html>
