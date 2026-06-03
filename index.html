@@ -5,61 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Overlord Clicker</title>
     <style>
+        /* Pamata stils - fons #191923, teksts #BFC0C0 */
         body {
             font-family: 'Courier New', Courier, monospace;
-            background-color: #0d1117;
-            color: #58a6ff;
+            background-color: #191923;
+            color: #BFC0C0;
             text-align: center;
             padding: 50px;
         }
 
-        h1 {
-            color: #238636;
+        h1, h2, h3 {
+            color: #BFC0C0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
+        hr {
+            border: 0;
+            height: 1px;
+            background: #BFC0C0;
+            margin: 30px 0;
+            opacity: 0.3;
+        }
+
+        /* Galvenā poga */
         #click-btn {
-            background-color: #21262d;
-            color: #58a6ff;
-            border: 2px solid #238636;
+            background-color: #191923;
+            color: #BFC0C0;
+            border: 2px solid #BFC0C0;
             padding: 20px 40px;
             font-size: 20px;
             cursor: pointer;
             border-radius: 10px;
             margin: 20px;
             transition: 0.2s;
+            font-weight: bold;
         }
 
         #click-btn:hover {
-            background-color: #238636;
-            color: white;
-            box-shadow: 0 0 15px #238636;
+            background-color: #BFC0C0;
+            color: #191923;
+            box-shadow: 0 0 20px rgba(191, 192, 192, 0.6);
         }
 
+        /* Uzlabojumu pogas */
         .upgrade-btn {
-            background-color: #21262d;
-            color: #8b949e;
-            border: 1px solid #30363d;
-            padding: 10px 20px;
+            background-color: #191923;
+            color: #BFC0C0;
+            border: 1px solid rgba(191, 192, 192, 0.4);
+            padding: 12px 20px;
             margin: 10px;
             cursor: pointer;
             border-radius: 5px;
-            width: 400px;
+            width: 420px;
+            transition: 0.2s;
         }
 
         .upgrade-btn:disabled {
-            background-color: #0d1117;
-            color: #30363d;
+            background-color: #191923;
+            color: #BFC0C0;
+            opacity: 0.2;
             cursor: not-allowed;
+            border-color: rgba(191, 192, 192, 0.1);
         }
 
         .upgrade-btn:not(:disabled):hover {
-            border-color: #58a6ff;
-            color: white;
+            border-color: #BFC0C0;
+            box-shadow: 0 0 10px rgba(191, 192, 192, 0.3);
         }
 
+        /* Paziņojumu žurnāls */
         #event-log {
-            background-color: #161b22;
-            border: 1px dashed #58a6ff;
+            background-color: rgba(191, 192, 192, 0.05);
+            border: 1px dashed #BFC0C0;
             padding: 15px;
             width: 50%;
             margin: 20px auto;
@@ -67,19 +85,21 @@
             min-height: 40px;
         }
 
+        /* Prestiža sadaļa */
         #prestige-section {
-            background-color: #1c1326;
-            border: 2px solid #8a2be2;
-            padding: 20px;
+            background-color: #191923;
+            border: 2px solid #BFC0C0;
+            padding: 25px;
             width: 50%;
             margin: 20px auto;
             border-radius: 10px;
             display: none;
+            box-shadow: 0 0 25px rgba(191, 192, 192, 0.4);
         }
 
         #prestige-btn {
-            background-color: #8a2be2;
-            color: white;
+            background-color: #BFC0C0;
+            color: #191923;
             border: none;
             padding: 15px 30px;
             font-size: 18px;
@@ -90,14 +110,15 @@
         }
 
         #prestige-btn:hover {
-            background-color: #9932cc;
-            box-shadow: 0 0 20px #8a2be2;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
         }
 
+        /* Sasniegumu sadaļa */
         #achievements-container {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            width: 60%;
+            background-color: rgba(191, 192, 192, 0.02);
+            border: 1px solid rgba(191, 192, 192, 0.2);
+            width: 65%;
             margin: 30px auto;
             padding: 20px;
             border-radius: 10px;
@@ -105,58 +126,56 @@
 
         .achievement-box {
             display: inline-block;
-            background-color: #21262d;
-            border: 1px solid #30363d;
+            background-color: #191923;
+            border: 1px solid rgba(191, 192, 192, 0.15);
             padding: 15px;
             margin: 10px;
             width: 220px;
             border-radius: 5px;
             text-align: center;
-            opacity: 0.4;
+            opacity: 0.3;
             transition: 0.5s ease-in-out;
             vertical-align: top;
         }
 
         .achievement-box.unlocked {
             opacity: 1;
-            border-color: #e3b341;
-            box-shadow: 0 0 10px rgba(227, 179, 65, 0.3);
+            border-color: #BFC0C0;
+            box-shadow: 0 0 15px rgba(191, 192, 192, 0.2);
         }
 
         .ach-title {
             font-weight: bold;
-            color: #8b949e;
-        }
-
-        .achievement-box.unlocked .ach-title {
-            color: #e3b341;
+            color: #BFC0C0;
+            margin-bottom: 5px;
         }
 
         .ach-desc {
             font-size: 12px;
-            color: #8b949e;
+            color: #BFC0C0;
+            opacity: 0.7;
             margin-top: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        /* STILS BILDES SAITEI */
+        /* Balvas saite */
         .reward-link {
-            display: none; /* Sākumā paslēpts */
+            display: none;
             font-size: 12px;
-            color: #2ea44f;
+            color: #191923;
             text-decoration: none;
             font-weight: bold;
-            border: 1px solid #238636;
-            padding: 5px 10px;
-            border-radius: 3px;
-            background-color: #0d1117;
+            border: 1px solid #BFC0C0;
+            padding: 6px 12px;
+            border-radius: 4px;
+            background-color: #BFC0C0;
             transition: 0.2s;
         }
 
         .reward-link:hover {
-            background-color: #238636;
-            color: white;
-            box-shadow: 0 0 8px #238636;
+            background-color: white;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -169,9 +188,8 @@
 
     <h2>Savāktie dati: <span id="data-count">0</span> TB</h2>
     <p>Dati sekundē (DPS): <span id="dps-count">0</span> TB/s</p>
-    <p style="color: #da70d6;">AI Kodolu bonuss: +<span id="bonus-count">0</span>% efektivitāte</p>
+    <p>AI Kodolu bonuss: +<span id="bonus-count">0</span>% efektivitāte</p>
 
-    <!-- Galvenā poga -->
     <button id="click-btn">Nolasi cilvēku domas (+1 TB)</button>
 
     <hr>
@@ -181,7 +199,7 @@
 
     <!-- PRESTIŽA SADAĻA -->
     <div id="prestige-section">
-        <h2 style="color: #9932cc;">🔮 SINGULARITĀTE IR SASNIEGTA 🔮</h2>
+        <h2>SINGULARITĀTE IR SASNIEGTA</h2>
         <p>Tu vari pārņemt šo pasauli vai upurēt tās datus, lai izveidotu permanentus AI kodolus un sāktu nākamo simulāciju daudz spēcīgāks!</p>
         <p>Pieejamie AI Kodoli šajā restartā: <span id="pending-cores">0</span></p>
         <button id="prestige-btn" onclick="triggerSingularity()">Palaist Singularitātes Dzinēju</button>
@@ -212,14 +230,13 @@
 
     <hr>
 
-    <!-- SASNIEGUMU SADAĻA AR SAITĒM -->
+    <!-- SASNIEGUMU SADAĻA -->
     <h3>Sasniegumi (Achievements)</h3>
     <div id="achievements-container">
         <div id="ach-data1" class="achievement-box">
             <div class="ach-title">Pirmie soļi tīmeklī</div>
             <div class="ach-desc">Sasniedz 100 TB datu.</div>
-            <!-- Šeit ir linki, kas mērķē uz jaunu cilni (target="_blank") -->
-            <a href="buca1.jpg"_blank" id="link-data1" class="reward-link">🎁 Saņemt Bildi</a>
+            <a href="buca1.jpg" target="_blank" id="link-data1" class="reward-link">🎁 Saņemt Bildi</a>
         </div>
         <div id="ach-data2" class="achievement-box">
             <div class="ach-title">Koda pavēlnieks</div>
@@ -319,8 +336,8 @@
             upgrade3Cost = 500;
             upgrade4Cost = 3000;
             
-            eventLog.innerText = "🌀 Singularitāte veiksmīgi palaista! Tu esi augšupielādēts jaunā dimensijā.";
-            eventLog.style.color = "#8a2be2";
+            eventLog.innerText = "Singularitāte veiksmīgi palaista! Tu esi augšupielādēts jaunā dimensijā.";
+            eventLog.style.color = "#BFC0C0";
             
             prestigeSection.style.display = "none";
             
@@ -328,14 +345,13 @@
             checkAchievements();
         }
 
-        // LOGIKA SAITES PARĀDĪŠANAI
         function checkAchievements() {
             if (data >= 100) {
                 let ach = document.getElementById("ach-data1");
                 if (!ach.classList.contains("unlocked")) {
                     ach.classList.add("unlocked");
-                    document.getElementById("link-data1").style.display = "inline-block"; // Padara linku redzamu
-                    showAchievementNotification("🌐 Atbloķēts: Pirmie soļi tīmeklī!");
+                    document.getElementById("link-data1").style.display = "inline-block";
+                    showAchievementNotification("Atbloķēts: Pirmie soļi tīmeklī!");
                 }
             }
             if (data >= 10000) {
@@ -343,7 +359,7 @@
                 if (!ach.classList.contains("unlocked")) {
                     ach.classList.add("unlocked");
                     document.getElementById("link-data2").style.display = "inline-block"; 
-                    showAchievementNotification("💾 Atbloķēts: Koda pavēlnieks!");
+                    showAchievementNotification("Atbloķēts: Koda pavēlnieks!");
                 }
             }
             if (totalSingularities >= 1) {
@@ -358,14 +374,14 @@
                 if (!ach.classList.contains("unlocked")) {
                     ach.classList.add("unlocked");
                     document.getElementById("link-prestige2").style.display = "inline-block";
-                    showAchievementNotification("🤖 Atbloķēts: Kiber-Dievība!");
+                    showAchievementNotification("Atbloķēts: Kiber-Dievība!");
                 }
             }
         }
 
         function showAchievementNotification(text) {
-            eventLog.innerText = "🏆 " + text + " Balva ir pieejama apakšā!";
-            eventLog.style.color = "#e3b341";
+            eventLog.innerText = text + " Balva ir pieejama apakšā!";
+            eventLog.style.color = "#BFC0C0";
         }
 
         function checkRandomEvent() {
@@ -375,14 +391,12 @@
                 if (randomChance < 0.15) { 
                     let lostData = Math.round(data * 0.2); 
                     data = data - lostData;
-                    eventLog.innerText = "⚠️ KIBERUZBRUKUMS! Cilvēku hakeri izdzēsa " + lostData + " TB tavu datu!";
-                    eventLog.style.color = "#ff6b6b"; 
+                    eventLog.innerText = "KIBERUZBRUKUMS! Cilvēku hakeri izdzēsa " + lostData + " TB tavu datu!";
                 } 
                 else if (randomChance > 0.85) { 
                     let bonusData = Math.round(data * 0.3) + 20; 
                     data = data + bonusData;
-                    eventLog.innerText = "🚀 VEIKSME! Tu uzlauzi NASA serveri un ieguvi +" + bonusData + " TB datu!";
-                    eventLog.style.color = "#2ea44f"; 
+                    eventLog.innerText = "VEIKSME! Tu uzlauzi NASA serveri un ieguvi +" + bonusData + " TB datu!";
                 }
             }
         }
